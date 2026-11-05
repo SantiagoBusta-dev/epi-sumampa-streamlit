@@ -1,8 +1,6 @@
-"""Carga y limpieza de datos para la app de Streamlit (EPI Sumampa, PP2 · Grupo 2 · ITSE).
-
-No usa Streamlit: así se puede probar por separado.
-"""
+"""Carga de las tablas ficticias del EPI y datasets abiertos de PAMI."""
 import io
+import json
 import unicodedata
 import urllib.request
 from pathlib import Path
@@ -10,10 +8,9 @@ from pathlib import Path
 import pandas as pd
 
 _BASE = Path(__file__).parent
-DATA = _BASE / "data" if (_BASE / "data").exists() else _BASE   # funciona con la carpeta data/ o con los CSV en la raíz
+DATA = _BASE / "data"
 BASE = "http://datos.pami.org.ar/dataset/"
 
-# Datasets de PAMI (INSSJP) en el portal de datos abiertos. Licencia CC BY 4.0.
 FUENTES = {
     "anio": ("pami_vacunas_antigripales_por_anio.csv",
              BASE + "ef69efec-b9c3-4a06-a245-49ed592ea0dc/resource/b4e7d4b4-5272-4663-a7d1-90c9e802151e/download/vacunas-antigripales-aplicadas-por-anio.csv"),
@@ -25,31 +22,28 @@ FUENTES = {
 LINKS = {
     "Campaña de vacunación antigripal (PAMI)": "https://datos.pami.org.ar/dataset/campana-vacunacion",
     "Puntos de vacunación (PAMI)": "https://datos.pami.org.ar/dataset/puntos-de-vacunacion",
-    "Campaña de vacunación antigripal (Datos Argentina)": "https://datos.gob.ar/dataset/campana-vacunacion",
-    "Puntos de vacunación (Datos Argentina)": "https://datos.gob.ar/dataset/puntos-de-vacunacion",
 }
 
-
-# ---------------------------------------------------------------- EPI (datos ficticios)
 def leer_epi():
-    alumnos = pd.read_csv(DATA / "alumnos.csv", dtype={"dni": str})
-    asistencia = pd.read_csv(DATA / "asistencia.csv", parse_dates=["fecha"])
-    insumos = pd.read_csv(DATA / "insumos.csv")
-    pedidos = pd.read_csv(DATA / "pedidos.csv", parse_dates=["fecha"])
-    alertas = pd.read_csv(DATA / "reporte_alertas.csv")
-    return alumnos, asistencia, insumos, pedidos, alertas
+    """Devuelve un diccionario con las siete tablas del CSV unificado."""
+    ruta = DATA / "epi_sumampa.csv"
+    origen = pd.read_csv(ruta, dtype=str, keep_default_na=False)
+    requeridas = {"tabla", "datos_json"}
+    if not requeridas.issubset(origen.columns):
+        raise ValueError("El CSV debe contener las columnas 'tabla' y 'datos_json'.")
+    tablas = {}
+    for nombre, grupo in origen.groupby("tabla", sort=True):
+        filas = [json.loads(valor) for valor in grupo["datos_json"]]
+        tablas[nombre] = pd.DataFrame(filas)
+    return tablas
 
-
-# ---------------------------------------------------------------- PAMI
 def decodificar(datos):
     try:
         return datos.decode("utf-8")
     except UnicodeDecodeError:
         return datos.decode("cp1252", errors="replace")
 
-
 def leer_texto(clave):
-    """Usa la copia local si existe; si no, descarga el archivo del portal de PAMI."""
     nombre, url = FUENTES[clave]
     ruta = DATA / nombre
     if ruta.exists():
@@ -57,11 +51,8 @@ def leer_texto(clave):
     pedido = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     return decodificar(urllib.request.urlopen(pedido, timeout=60).read())
 
-
 def _entero(serie):
-    # Los números vienen con punto de miles (1.500): se leen como texto y se convierten.
     return serie.str.replace(".", "", regex=False).astype(int)
-
 
 def cargar_anio():
     d = pd.read_csv(io.StringIO(leer_texto("anio")), sep=";", skiprows=2, dtype=str)
@@ -74,12 +65,11 @@ def cargar_anio():
     d["agentes_%_del_total"] = (d["agentes"] / d["total"] * 100).round(2)
     return d
 
-
 def cargar_ugl():
     d = pd.read_csv(io.StringIO(leer_texto("ugl")), sep=";", skiprows=5, dtype=str)
     d.columns = ["ugl_id", "ugl", "indicadores", "beneficiarios", "agentes", "total"]
     d = d.drop(columns="indicadores").dropna(subset=["ugl_id"])
-    d = d[d["ugl_id"] != "Total"].copy()           # la última fila es el total del archivo
+    d = d[d["ugl_id"] != "Total"].copy()
     for c in ["beneficiarios", "agentes", "total"]:
         d[c] = _entero(d[c])
     d["ugl_id"] = d["ugl_id"].astype(int)
@@ -88,42 +78,34 @@ def cargar_ugl():
     d["puesto"] = d.index + 1
     return d
 
-
 PROVINCIAS = {"BUENOS AIRES", "CABA", "CATAMARCA", "CHACO", "CHUBUT", "CORDOBA", "CORRIENTES", "ENTRE RIOS", "FORMOSA",
               "JUJUY", "LA PAMPA", "LA RIOJA", "MENDOZA", "MISIONES", "NEUQUEN", "RIO NEGRO", "SALTA", "SAN JUAN",
               "SAN LUIS", "SANTA CRUZ", "SANTA FE", "SANTIAGO DEL ESTERO", "TIERRA DEL FUEGO", "TUCUMAN"}
 SINONIMOS = {"CAPITAL": "CABA", "CAPITAL FEDERAL": "CABA", "CDAD. BUENOS AIRES": "CABA",
              "CIUDAD AUTONOMA DE BUENOS AIRES": "CABA", "CIUDAD DE BUENOS AIRES": "CABA"}
 
-
 def normalizar(texto):
-    """Mayúsculas, sin tildes ni espacios sobrantes."""
     if pd.isna(texto):
         return pd.NA
     t = unicodedata.normalize("NFKD", str(texto)).encode("ascii", "ignore").decode()
     t = " ".join(t.upper().split())
     return t if t else pd.NA
 
-
 def cargar_puntos(texto):
-    """Lee el listado de puntos de vacunación, lo limpia y devuelve (tabla, resumen de calidad)."""
     p = pd.read_csv(io.StringIO(texto), sep=";", skiprows=3, header=None, dtype=str,
                     names=["id", "nombre", "domicilio", "localidad", "provincia_original"], usecols=[0, 1, 2, 3, 4])
     n_inicial = len(p)
     p = p.dropna(subset=["id"])
-    p = p.dropna(subset=["nombre", "domicilio"], how="all")          # filas sin datos (solo el id)
+    p = p.dropna(subset=["nombre", "domicilio"], how="all")
     p["provincia"] = p["provincia_original"].map(normalizar).replace(SINONIMOS)
     p["reconocida"] = p["provincia"].isin(PROVINCIAS)
-    # El código de UGL está en el id: 901... = UGL 1, 902... = UGL 2, etc. (solo ids que empiezan con 9)
     p["ugl_id"] = pd.to_numeric(p["id"].where(p["id"].str.startswith("9")).str[1:3], errors="coerce")
     resumen = {"filas leídas": n_inicial, "filas sin datos": n_inicial - len(p), "filas útiles": len(p),
                "provincia no reconocida": int((~p["reconocida"]).sum())}
     return p, resumen
 
-
 def puntos_por_provincia(puntos):
     return puntos[puntos["reconocida"]]["provincia"].value_counts()
-
 
 def aplicaciones_por_punto(puntos, ugl):
     por_ugl = (puntos.dropna(subset=["ugl_id"]).assign(ugl_id=lambda d: d["ugl_id"].astype(int))
