@@ -33,6 +33,14 @@ Aplicación multipágina en Streamlit para explorar un conjunto de datos fictici
     └── epi_sumampa.csv
 ```
 
+## 🌐 Aplicación en línea
+
+Podés acceder a la aplicación desde el siguiente enlace:
+
+👉 **[Abrir EPI Sumampa en Streamlit](https://epi-sumampa-app-hsgmgtbwb4dnouaj3sx7sq.streamlit.app/)**
+
+```
+
 ## Ejecutar localmente
 ```bash
 pip install -r requirements.txt
