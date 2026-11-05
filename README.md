@@ -6,16 +6,19 @@ Aplicación multipágina desarrollada con Streamlit. Presenta el circuito propue
 
 ## Secciones
 - **Inicio:** presentación del proyecto y resumen.
-- **Panel del EPI:** indicadores, filtros, gráficos de asistencia, vacunación, características e insumos.
-- **Alertas y seguimiento:** alertas de demostración sin mostrar DNI ni nombres.
+- **Panel del EPI:** indicadores, filtros y gráficos de demostración.
+- **Alertas y seguimiento:** alertas ilustrativas sin mostrar datos personales.
 - **Análisis PAMI:** vacunación antigripal por año y por UGL.
 - **Puntos de vacunación:** carga y exploración del conjunto territorial.
 - **Metodología y privacidad:** circuito de datos, formularios, roles y criterios de acceso.
+- **EDA ampliado:** exploración de las siete tablas del archivo `data/epi_sumampa.csv`, con distribuciones, estadísticas descriptivas, cruces y controles básicos de calidad.
 
 ## Importante sobre los datos
-Los datos del EPI incluidos en el repositorio son ficticios y se utilizan únicamente para probar la aplicación. No subir datos reales de niños, familias, DNI, teléfonos, domicilios ni información de salud. Los datos de PAMI corresponden a beneficiarios del Instituto y no a niños del EPI.
+Los datos del EPI incluidos en el repositorio son ficticios y se utilizan únicamente para probar la aplicación. Los resultados del EDA no describen la situación real del EPI ni deben utilizarse para tomar decisiones sobre niños o familias. No subir datos reales de niños, familias, DNI, teléfonos, domicilios ni información de salud.
 
-Los formularios se comparten por canales internos con el personal autorizado. La planilla central no debe publicarse ni dejarse con acceso abierto. La distribución interna de un enlace no equivale a una restricción técnica de identidad.
+El conjunto PAMI corresponde a información pública de beneficiarios del Instituto y se presenta en una sección independiente; no debe mezclarse con los datos ficticios del EPI.
+
+Los formularios se comparten por canales internos con el personal autorizado. La planilla central no debe publicarse ni dejarse con acceso abierto. Compartir un enlace internamente no equivale a restringir técnicamente quién puede acceder.
 
 ## Estructura
 ```text
@@ -31,9 +34,10 @@ Los formularios se comparten por canales internos con el personal autorizado. La
 │   ├── 03_alertas.py
 │   ├── 04_pami.py
 │   ├── 05_puntos.py
-│   └── 06_metodologia.py
+│   ├── 06_metodologia.py
+│   └── 07_eda.py
 └── data/
-    └── archivos CSV de demostración y datos abiertos
+    └── epi_sumampa.csv
 ```
 
 ## Ejecutar localmente
@@ -44,10 +48,9 @@ streamlit run app.py
 
 ## Publicar en Streamlit Community Cloud
 1. Subir o actualizar los archivos del proyecto en GitHub.
-2. En Streamlit Community Cloud, crear una aplicación nueva o abrir la existente.
-3. Seleccionar el repositorio, la rama `main` y el archivo principal `app.py`.
-4. Presionar **Deploy** o **Reboot app** si corresponde.
-5. Cuando se actualice la rama configurada, Streamlit detectará el cambio y reconstruirá la aplicación.
+2. En Streamlit Community Cloud, abrir la aplicación existente.
+3. Comprobar que el repositorio, la rama y `app.py` sean los correctos.
+4. Guardar los cambios y esperar la reconstrucción de la aplicación.
 
 ## Fuentes
 - PAMI, campaña de vacunación antigripal: https://datos.pami.org.ar/dataset/campana-vacunacion
