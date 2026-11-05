@@ -1,37 +1,55 @@
-# EPI Sumampa: de los registros en papel a los datos (app de Streamlit)
+# EPI Sumampa: de los cuadernos a los datos
 
-Práctica Profesionalizante II · Grupo 2 · ITSE Sede Sumampa
+**Práctica Profesionalizante II · Grupo 2 · ITSE · Sede Sumampa**
 
-App con 6 pestañas: el proyecto, el dashboard del EPI (datos **ficticios**), las alertas con consulta por DNI,
-las vacunas antigripales de PAMI (por año y por UGL), los puntos de vacunación de PAMI y las fuentes.
+Aplicación multipágina desarrollada con Streamlit. Presenta el circuito propuesto para ordenar registros del EPI, explorar datos ficticios de demostración y analizar conjuntos de datos abiertos de PAMI de manera separada.
 
-> Los datos del EPI son ficticios. Los datos de PAMI son de beneficiarios del Instituto, no de niños.
+## Secciones
+- **Inicio:** presentación del proyecto y resumen.
+- **Panel del EPI:** indicadores, filtros, gráficos de asistencia, vacunación, características e insumos.
+- **Alertas y seguimiento:** alertas de demostración sin mostrar DNI ni nombres.
+- **Análisis PAMI:** vacunación antigripal por año y por UGL.
+- **Puntos de vacunación:** carga y exploración del conjunto territorial.
+- **Metodología y privacidad:** circuito de datos, formularios, roles y criterios de acceso.
 
-## Archivos
-| Archivo | Para qué sirve |
-|---|---|
-| `app.py` | La interfaz de Streamlit |
-| `datos.py` | Carga y limpieza de los datos (sin Streamlit) |
-| `graficos.py` | Los gráficos (matplotlib) |
-| `requirements.txt` | Librerías necesarias |
-| `data/` | CSV del EPI (ficticio) y de PAMI (antigripales por año y por UGL) |
+## Importante sobre los datos
+Los datos del EPI incluidos en el repositorio son ficticios y se utilizan únicamente para probar la aplicación. No subir datos reales de niños, familias, DNI, teléfonos, domicilios ni información de salud. Los datos de PAMI corresponden a beneficiarios del Instituto y no a niños del EPI.
 
-El tercer dataset (puntos de vacunación) se descarga desde la app al apretar el botón.
+Los formularios se comparten por canales internos con el personal autorizado. La planilla central no debe publicarse ni dejarse con acceso abierto. La distribución interna de un enlace no equivale a una restricción técnica de identidad.
 
-## Ejecutarla en la computadora
+## Estructura
+```text
+.
+├── app.py
+├── datos.py
+├── graficos.py
+├── requirements.txt
+├── README.md
+├── pages/
+│   ├── 01_inicio.py
+│   ├── 02_epi.py
+│   ├── 03_alertas.py
+│   ├── 04_pami.py
+│   ├── 05_puntos.py
+│   └── 06_metodologia.py
+└── data/
+    └── archivos CSV de demostración y datos abiertos
+```
+
+## Ejecutar localmente
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Publicarla en Streamlit Community Cloud
-1. En https://github.com crear un repositorio **público** (por ejemplo `epi-sumampa-streamlit`) y subir estos archivos: `app.py`, `datos.py`, `graficos.py`, `requirements.txt`, `README.md` y la carpeta `data/`. `app.py` tiene que quedar en la raíz del repositorio.
-2. Entrar a https://share.streamlit.io e iniciar sesión (con GitHub, para que vea el repositorio).
-3. Elegir **Create app** → **Deploy a public app from GitHub**.
-4. Completar: repositorio, rama `main` y archivo principal `app.py`. Apretar **Deploy**.
-5. Esperar unos minutos. La app queda en una dirección del tipo `https://<nombre>.streamlit.app`.
+## Publicar en Streamlit Community Cloud
+1. Subir o actualizar los archivos del proyecto en GitHub.
+2. En Streamlit Community Cloud, crear una aplicación nueva o abrir la existente.
+3. Seleccionar el repositorio, la rama `main` y el archivo principal `app.py`.
+4. Presionar **Deploy** o **Reboot app** si corresponde.
+5. Cuando se actualice la rama configurada, Streamlit detectará el cambio y reconstruirá la aplicación.
 
-## Fuentes (licencia Creative Commons Attribution 4.0)
-- Campaña de vacunación antigripal: https://datos.pami.org.ar/dataset/campana-vacunacion
-- Puntos de vacunación: https://datos.pami.org.ar/dataset/puntos-de-vacunacion
-- Los mismos en Datos Argentina: https://datos.gob.ar/dataset/campana-vacunacion y https://datos.gob.ar/dataset/puntos-de-vacunacion
+## Fuentes
+- PAMI, campaña de vacunación antigripal: https://datos.pami.org.ar/dataset/campana-vacunacion
+- PAMI, puntos de vacunación: https://datos.pami.org.ar/dataset/puntos-de-vacunacion
+- Datos Argentina: https://datos.gob.ar/
