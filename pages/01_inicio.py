@@ -3,10 +3,11 @@ import datos
 
 @st.cache_data
 def cargar():
-    return datos.leer_epi(), datos.cargar_anio(), datos.cargar_ugl()
+    return datos.leer_epi()
 
-(alumnos, asistencia, insumos, pedidos, alertas), anio, ugl = cargar()
-
+tablas = cargar()
+alumnos = tablas.get("alumnos", __import__("pandas").DataFrame())
+asistencia = tablas.get("asistencia", __import__("pandas").DataFrame())
 st.markdown("""
 <div class="hero">
   <div class="eyebrow">PRÁCTICA PROFESIONALIZANTE II · GRUPO 2</div>
@@ -14,29 +15,27 @@ st.markdown("""
   <p>Una propuesta para ordenar la información del Espacio de Primera Infancia de Sumampa y transformarla en datos útiles para acompañar la tarea cotidiana.</p>
 </div>
 """, unsafe_allow_html=True)
-
-st.markdown('<div class="section-kicker">El proyecto en pocas palabras</div>', unsafe_allow_html=True)
-st.title("Una forma más simple de trabajar con la información")
-st.write("La propuesta conecta formularios digitales, una planilla central y herramientas de análisis. El objetivo es evitar la doble carga, facilitar las consultas y ofrecer una mirada más clara sobre asistencia, insumos y seguimiento.")
-
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.markdown('<div class="info-card"><h3>📱 Registro desde el celular</h3><p>El personal autorizado completa formularios sencillos desde el teléfono, sin necesitar una computadora en el EPI.</p></div>', unsafe_allow_html=True)
-with c2:
-    st.markdown('<div class="info-card"><h3>📋 Información organizada</h3><p>Las respuestas llegan a una planilla central para mantener los registros reunidos y ordenados.</p></div>', unsafe_allow_html=True)
-with c3:
-    st.markdown('<div class="info-card"><h3>📊 Análisis y seguimiento</h3><p>Python permite limpiar, analizar y presentar la información mediante indicadores, gráficos y alertas.</p></div>', unsafe_allow_html=True)
-
-st.markdown("### Vista general de los datos de demostración")
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("Registros infantiles", len(alumnos), help="Dataset ficticio utilizado para probar el funcionamiento.")
-m2.metric("Registros de asistencia", len(asistencia))
-m3.metric("Alertas de ejemplo", len(alertas))
-m4.metric("Años en PAMI", len(anio))
-
-st.info("**Importante:** los registros del EPI que aparecen en esta demostración son ficticios. Los datos de PAMI corresponden a beneficiarios del Instituto y se analizan por separado; no representan a los niños del EPI.")
-
-st.markdown("### Cómo recorrer la aplicación")
-st.write("Usá el menú lateral para entrar al panel del EPI, revisar las alertas, explorar los datos abiertos de PAMI o conocer la metodología y las medidas de privacidad.")
-with st.expander("¿Qué buscamos resolver?"):
-    st.write("Actualmente, el trabajo con registros en papel puede hacer más lenta la búsqueda de información y la elaboración de reportes. La propuesta busca que cada dato se registre una sola vez y pueda utilizarse luego para consultas y análisis.")
+st.markdown('<div class="section-kicker">EL PROYECTO</div>', unsafe_allow_html=True)
+st.title("Una mirada integral de la información")
+st.write("Esta versión trabaja con un único conjunto ficticio y más completo, organizado en siete tablas relacionadas: alumnos, tutores, docentes, asistencia, vínculos alumno-tutor, insumos y pedidos.")
+cols = st.columns(4)
+total = sum(len(x) for x in tablas.values())
+cols[0].metric("Tablas", len(tablas))
+cols[1].metric("Registros totales", f"{total:,}".replace(",", "."))
+cols[2].metric("Alumnos", len(alumnos))
+cols[3].metric("Asistencias", len(asistencia))
+st.markdown("### ¿Qué podés explorar?")
+cards = [
+    ("👧 Alumnos y tutores", "Información de inscripción, edades, barrios, vacunas y vínculos familiares."),
+    ("🗓️ Asistencia", "Registros por fecha, tipo de persona y estado de asistencia."),
+    ("👩‍🏫 Equipo", "Composición del personal y distribución por rol."),
+    ("📦 Insumos y pedidos", "Categorías de insumos, cantidades solicitadas y estado de los pedidos."),
+]
+for i in range(0, len(cards), 2):
+    c1, c2 = st.columns(2)
+    for col, (titulo, desc) in zip((c1,c2), cards[i:i+2]):
+        with col:
+            st.markdown(f'<div class="info-card"><h3>{titulo}</h3><p>{desc}</p></div>', unsafe_allow_html=True)
+st.info("Todos los registros del EPI incluidos en esta demostración son ficticios. La sección de PAMI utiliza un conjunto de datos públicos independiente.")
+st.markdown("### Recorrido sugerido")
+st.write("Empezá por **Panel integral del EPI** para ver gráficos y registros por tabla. Después visitá **Alertas y seguimiento** y **EDA ampliado** para profundizar el análisis.")
