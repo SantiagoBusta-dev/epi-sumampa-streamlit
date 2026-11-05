@@ -1,0 +1,6 @@
+id_insumo,nombre,categoria,unidad,stock_actual,stock_minimo,bajo_minimo
+1,Leche,Alimento,litros,14,20,True
+2,Pañales,Higiene,unidades,120,80,False
+3,Gasas,Salud,paquetes,6,10,True
+4,Alcohol,Salud,litros,4,2,False
+5,Galletas,Alimento,paquetes,25,15,False

@@ -1,0 +1,7 @@
+id_pedido,id_insumo,fecha,cantidad,estado
+1,1,2026-04-27,20,Entregado
+2,2,2026-04-29,100,Entregado
+3,3,2026-05-04,10,Pendiente
+4,1,2026-05-05,20,Pendiente
+5,4,2026-05-05,3,Entregado
+6,5,2026-05-06,20,Entregado

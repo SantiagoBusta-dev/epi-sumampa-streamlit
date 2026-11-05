@@ -1,0 +1,17 @@
+id_alumno,nombre,apellido,dni,fecha_nacimiento,edad,barrio,turno,vacunas_completas,carnet_vacunas,seguro,alergias,edad_calculada,vacunas_completas_bool,tiene_alergia,revisar_vacunacion
+1,Mateo,Díaz,57960190,2022-07-16,3,Centro,Tarde,Si,Presentado,Si,Ninguna,3,True,False,False
+2,Zoe,Medina,58290282,2024-02-15,2,Sur,Mañana,Si,Presentado,En proceso,Ninguna,2,True,False,False
+3,Santino,Vera,58128418,2022-08-16,3,Centro,Mañana,Si,Presentado,Sin dato,Penicilina,3,True,True,False
+4,Joaquín,Rojas,59036624,2022-08-15,3,Norte,Tarde,Si,Presentado,Si,Huevo,3,True,True,False
+5,Mía,Salvatierra,57412610,2023-10-14,2,Norte,Mañana,Si,Presentado,En proceso,Ninguna,2,True,False,False
+6,Lautaro,Luna,59090528,2023-01-05,3,Norte,Mañana,No,En trámite,Si,Penicilina,3,False,True,False
+7,Valentina,Luna,57058856,2023-07-18,2,Centro,Tarde,Si,Presentado,Si,Ninguna,2,True,False,False
+8,Bautista,Ortiz,59291971,2022-07-05,3,Norte,Mañana,Si,Presentado,En proceso,Ninguna,3,True,False,False
+9,Benjamín,Ortiz,59445553,2023-05-07,2,Norte,Tarde,Si,Presentado,En proceso,Ninguna,2,True,False,False
+10,Olivia,Juárez,59508765,2024-03-01,2,Sur,Mañana,Si,Presentado,Si,Ninguna,2,True,False,False
+11,Thiago,Herrera,58637486,2023-10-08,2,Centro,Tarde,Si,Presentado,Si,Ninguna,2,True,False,False
+12,Martina,Toledo,57108172,2022-05-31,3,Centro,Mañana,Si,En trámite,Si,Ninguna,3,True,False,True
+13,Lucas,Ibarra,57716108,2023-12-29,2,Centro,Mañana,Si,Presentado,Si,Ninguna,2,True,False,False
+14,Lola,Navarro,59295768,2023-04-17,3,Norte,Tarde,Si,Presentado,Si,Penicilina,3,True,True,False
+15,Sofía,Figueroa,59029375,2022-12-22,3,Sur,Tarde,No,Pendiente,En proceso,Ninguna,3,False,False,False
+16,Emma,Paz,57780162,2023-07-14,2,Norte,Tarde,Si,Presentado,Si,Ninguna,2,True,False,False
